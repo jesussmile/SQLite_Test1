@@ -1,5 +1,7 @@
 package com.example.pannam.sqlitetest;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,15 +20,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Sqlite initial command
+        //USE MODE_PRIVATE FOR SECURITY REASONS AS ITS ONLY APPLICABLE TO OUR APPLICATION.
+        //null is default sth to do with cursor
+        SQLiteDatabase sqLiteDatabase = getBaseContext().openOrCreateDatabase("sqlite-test-1.db", MODE_PRIVATE, null);
+        //create table
+        sqLiteDatabase.execSQL("CREATE TABLE contacts(name TEXT, phone INTEGER, email, TEXT");
+        //use single quotes whereevver possible
+        sqLiteDatabase.execSQL("INSERT INTO contacts VALUES('Pannam', 9849624996,'pullbackwild@gmail.com');");
+        sqLiteDatabase.execSQL("INSERT INTO contacts VALUES('Burma', 225541,'burma@gmail.com');");
+        //cursor is the command that returns the query
+        Cursor query = sqLiteDatabase.rawQuery("SELECT *from contacts", null);
+        //check if the data is there if no data will return false
+        if (query.moveToFirst()) {
+            //Cycle through all records
+            String name = query.getString(0);
+            int phone = query.getInt(1);
+            String email = query.getString(2);
+            Toast.makeText(getBaseContext(), "Name = " + name + " phone = " + phone + " email = " + email, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getBaseContext(), "Error retrieving data", Toast.LENGTH_LONG).show();
+        }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
