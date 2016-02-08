@@ -24,8 +24,10 @@ public class MainActivity extends AppCompatActivity {
         //USE MODE_PRIVATE FOR SECURITY REASONS AS ITS ONLY APPLICABLE TO OUR APPLICATION.
         //null is default sth to do with cursor
         SQLiteDatabase sqLiteDatabase = getBaseContext().openOrCreateDatabase("sqlite-test-1.db", MODE_PRIVATE, null);
+        //delete table before you create it but not useful in real world
+        sqLiteDatabase.execSQL("DROP TABLE contacts");
         //create table
-        sqLiteDatabase.execSQL("CREATE TABLE contacts(name TEXT, phone INTEGER, email, TEXT");
+        sqLiteDatabase.execSQL("CREATE TABLE contacts(name TEXT, phone INTEGER, email TEXT)");
         //use single quotes whereevver possible
         sqLiteDatabase.execSQL("INSERT INTO contacts VALUES('Pannam', 9849624996,'pullbackwild@gmail.com');");
         sqLiteDatabase.execSQL("INSERT INTO contacts VALUES('Burma', 225541,'burma@gmail.com');");
@@ -33,15 +35,20 @@ public class MainActivity extends AppCompatActivity {
         Cursor query = sqLiteDatabase.rawQuery("SELECT *from contacts", null);
         //check if the data is there if no data will return false
         if (query.moveToFirst()) {
-            //Cycle through all records
-            String name = query.getString(0);
-            int phone = query.getInt(1);
-            String email = query.getString(2);
-            Toast.makeText(getBaseContext(), "Name = " + name + " phone = " + phone + " email = " + email, Toast.LENGTH_LONG).show();
+            do {
+                //Cycle through all records
+                String name = query.getString(0);
+                int phone = query.getInt(1);
+                String email = query.getString(2);
+                Toast.makeText(getBaseContext(), "Name = " + name + " phone = " + phone + " email = " + email, Toast.LENGTH_LONG).show();
+            } while (query.moveToNext());
+
         } else {
             Toast.makeText(getBaseContext(), "Error retrieving data", Toast.LENGTH_LONG).show();
         }
 
+        //close the database
+        sqLiteDatabase.close();
     }
 
     @Override
